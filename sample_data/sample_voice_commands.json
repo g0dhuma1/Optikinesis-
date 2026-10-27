@@ -1,0 +1,60 @@
+[
+  {
+    "input": "Search what is the weather today on Google",
+    "expected_action": "search_google",
+    "expected_params": {
+      "query": "what is the weather today"
+    },
+    "requires_confirmation": false
+  },
+  {
+    "input": "Open YouTube and search relaxing piano music",
+    "expected_action": "search_youtube",
+    "expected_params": {
+      "query": "relaxing piano music"
+    },
+    "requires_confirmation": false
+  },
+  {
+    "input": "Send email to caregiver@example.com, subject Need Assistance, message Please bring a glass of water",
+    "expected_action": "send_email",
+    "expected_params": {
+      "recipient": "caregiver@example.com",
+      "subject": "Need Assistance",
+      "body": "Please bring a glass of water"
+    },
+    "requires_confirmation": true
+  },
+  {
+    "input": "Email doctor@clinic.org saying Prescription renewal request",
+    "expected_action": "send_email",
+    "expected_params": {
+      "recipient": "doctor@clinic.org",
+      "body": "Prescription renewal request"
+    },
+    "requires_confirmation": true
+  },
+  {
+    "input": "Set an alarm for 08:30 AM",
+    "expected_action": "set_alarm",
+    "expected_params": {
+      "time": "08:30 AM"
+    },
+    "requires_confirmation": true
+  },
+  {
+    "input": "Set a reminder in 15 minutes",
+    "expected_action": "set_reminder",
+    "expected_params": {
+      "amount": "15",
+      "unit": "minutes"
+    },
+    "requires_confirmation": true
+  },
+  {
+    "input": "Read this page",
+    "expected_action": "read_page",
+    "expected_params": {},
+    "requires_confirmation": false
+  }
+]

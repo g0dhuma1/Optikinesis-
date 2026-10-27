@@ -328,8 +328,12 @@ OptiKinesis/
 ├── preview_overlay.py        # Live-reload preview tool for iterating on overlay UI
 ├── face_landmarker.task      # MediaPipe face landmark model (3.7 MB)
 ├── requirements.txt          # Python dependencies
+├── TECHNICAL_DESIGN.md       # Technical Design Document with Mermaid architectural diagrams
+├── TESTING.md                # Testing guide & sample data documentation
+├── LICENSE                   # MIT License
 ├── OVERLAY_UI_MAP.md         # Developer reference — which code lines change which UI elements
 ├── PROJECT_DESCRIPTION.md    # Detailed project description document
+├── sample_data/              # Sample test fixtures (calibration, settings, voice, blinks)
 ├── templates/                # Flask HTML templates (web dashboard)
 ├── static/                   # Static assets for web interface
 └── tests/                    # Automated blink, calibration, fatigue, voice, and API tests
@@ -340,48 +344,120 @@ OptiKinesis/
 ## Getting Started
 
 ### Prerequisites
-- Python 3.8+
-- A computer with a webcam
 
-### Installation
+- **Operating System**: Windows 10/11 (fully supported with native desktop overlay), or macOS / Linux (Web Dashboard mode)
+- **Python**: Version 3.8 to 3.11
+- **Hardware**: Standard integrated or USB webcam (720p @ 30 FPS minimum), working microphone for voice commands
+
+---
+
+### Step-by-Step Setup
+
+#### 1. Clone the Repository
 ```bash
-git clone <repository-url>
-cd ALS_Testing_phase
+git clone https://github.com/g0dhuma1/Optikinesis-.git
+cd Optikinesis-
+```
+
+#### 2. Create and Activate a Virtual Environment
+```bash
+# Windows (PowerShell)
+python -m venv venv
+.\venv\Scripts\Activate.ps1
+
+# Windows (Command Prompt)
+python -m venv venv
+venv\Scripts\activate.bat
+
+# Linux / macOS
+python3 -m venv venv
+source venv/bin/activate
+```
+
+#### 3. Install Dependencies
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### Run
+> **Note on PyQt5**: The native floating desktop overlay requires PyQt5 (`pip install PyQt5`). On systems without PyQt5, OptiKinesis gracefully falls back to browser-based control mode (`--web`).
+
+#### 4. Configure Environment Variables
+Copy the sample environment file and configure any optional service integrations:
+```bash
+cp .env.example .env     # Linux / macOS
+copy .env.example .env   # Windows
+```
+
+---
+
+### Environment Variables (`.env`)
+
+All environment variables are optional. The system operates locally out of the box with default fallbacks if `.env` is omitted.
+
+| Variable | Required? | Default | Description & Usage |
+|---|---|---|---|
+| `TWILIO_SID` | Optional | *None* | Twilio Account SID for sending automated emergency SOS SMS / voice calls to caregivers. |
+| `TWILIO_AUTH` | Optional | *None* | Twilio Auth Token for API authentication. |
+| `TWILIO_PHONE` | Optional | *None* | Twilio phone number in E.164 format (e.g., `+15551234567`) registered as the sender. |
+| `SMTP_SERVER` | Optional | `smtp.gmail.com` | Outgoing SMTP mail server used for voice-dictated email sending. |
+| `SMTP_PORT` | Optional | `587` | Port for outgoing SMTP connections with TLS encryption. |
+| `SMTP_EMAIL` | Optional | *None* | Caregiver or user Gmail/email address used to authenticate and send outgoing messages. |
+| `SMTP_PASSWORD` | Optional | *None* | Email App Password (generated via Google Account App Passwords) for authentication. |
+| `WHATSAPP_SEND_DELAY` | Optional | `12` | Number of seconds to wait for WhatsApp Web to load in the browser before dispatching message. |
+| `TINYFISH_API_KEY` | Optional | *None* | API key for TinyFish AI Search & Fetch clean reader engine ([obtain free key](https://agent.tinyfish.ai/api-keys)). If omitted, web searches fall back directly to Google. |
+
+---
+
+### Running the Application
+
+#### Option A: Native Floating Desktop Overlay (Recommended)
 ```bash
 python main.py
 ```
+- Launches the native transparent overlay hovering over your desktop.
+- On first launch, follow the automated **5-point head calibration**: comfortably turn your head toward each dot on the screen and hold still.
+- Move your head to steer the cursor; blink deliberately (two blinks within 1.5 seconds by default) to click.
+- User accessibility profiles and calibration coordinates are saved automatically in `settings.json`.
 
-The system launches the native floating overlay. On first launch, a 5-point head calibration starts as soon as your face is detected: turn comfortably toward each dot and hold still. Move your head to control the cursor and use deliberate blinks to click. The default is two blinks within 1.5 seconds.
-
-Caregiver keys:
-
+**Caregiver Safety Hotkeys**:
 | Key | Action |
 |---|---|
-| **F9** | Re-center the cursor on the current head position |
-| **F12** | Pause or resume mouse control |
-| **Esc** / **F12** | Cancel a running calibration |
+| **F9** | Instantaneous re-center of the cursor on the current head pose |
+| **F12** | Global safety pause / resume for all mouse control |
+| **Esc** / **F12** | Cancel an active calibration run |
 
-Keystrokes typed through the on-screen keyboard never trigger these keys.
-
-Optional browser dashboard:
-
+#### Option B: Browser Web Dashboard
 ```bash
 python main.py --web
 ```
+- Starts a local web server at `http://127.0.0.1:5000`.
+- Provides live camera streaming with overlaid face landmark mesh, real-time yaw/pitch telemetry gauges, and a settings customization portal.
 
-The web server binds to `127.0.0.1` by default. Use `python main.py --help` for host, port, and browser-launch options.
+---
 
-Optional Twilio, SMTP and TinyFish integrations can be configured by copying `.env.example` to `.env` and filling only the credentials you need. Without `TINYFISH_API_KEY`, the Web panel explains how to enable it and voice searches open Google as before. User accessibility settings are saved locally in `settings.json`.
+### Running Tests & Validating Sample Data
 
-### Tests
+OptiKinesis includes an automated test suite with **83 tests** covering all algorithms, blink detectors, calibration projections, and voice parsers.
 
 ```bash
+# Run all automated tests
 python -m unittest discover -v
+
+# Run sample data integration tests
+python -m unittest tests/test_sample_data.py -v
 ```
+
+For detailed test architecture, coverage reports, and sample data specifications, see [`TESTING.md`](TESTING.md).
+
+---
+
+## Documentation Links
+
+- **[Technical Design Document](TECHNICAL_DESIGN.md)**: Full architectural diagrams, MediaPipe mathematical projections, threading models, and state machines.
+- **[Testing & Sample Data Guide](TESTING.md)**: Test suites, coverage breakdown, and sample fixture documentation.
+- **[Overlay UI Map](OVERLAY_UI_MAP.md)**: Detailed code-to-element mapping for the PyQt5 overlay.
+- **[License](LICENSE)**: MIT License.
 
 ---
 

@@ -1,0 +1,79 @@
+{
+  "description": "Simulated Eye Aspect Ratio (EAR) time-series sequences for testing blink classification. Normal open-eye EAR is approx 0.30 - 0.35; closed-eye EAR drops below threshold 0.20 - 0.22.",
+  "sampling_rate_hz": 30,
+  "test_cases": [
+    {
+      "name": "involuntary_micro_blink",
+      "description": "Quick natural involuntary blink (duration ~66ms). Should be filtered out and NOT trigger a blink or click.",
+      "readings": [
+        {"t": 0.00, "ear": 0.32, "eyes_closed": false},
+        {"t": 0.033, "ear": 0.16, "eyes_closed": true},
+        {"t": 0.066, "ear": 0.15, "eyes_closed": true},
+        {"t": 0.10, "ear": 0.31, "eyes_closed": false},
+        {"t": 0.133, "ear": 0.33, "eyes_closed": false}
+      ],
+      "expected_click": false,
+      "expected_blinks": 0
+    },
+    {
+      "name": "deliberate_single_blink",
+      "description": "Deliberate blink with duration ~233ms. Counts as 1 deliberate blink.",
+      "readings": [
+        {"t": 0.00, "ear": 0.32, "eyes_closed": false},
+        {"t": 0.033, "ear": 0.16, "eyes_closed": true},
+        {"t": 0.066, "ear": 0.14, "eyes_closed": true},
+        {"t": 0.100, "ear": 0.13, "eyes_closed": true},
+        {"t": 0.133, "ear": 0.14, "eyes_closed": true},
+        {"t": 0.166, "ear": 0.15, "eyes_closed": true},
+        {"t": 0.200, "ear": 0.15, "eyes_closed": true},
+        {"t": 0.233, "ear": 0.16, "eyes_closed": true},
+        {"t": 0.266, "ear": 0.31, "eyes_closed": false},
+        {"t": 0.300, "ear": 0.33, "eyes_closed": false}
+      ],
+      "expected_click": false,
+      "expected_blinks": 1
+    },
+    {
+      "name": "deliberate_double_blink",
+      "description": "Two deliberate blinks (~200ms each) spaced within 1.0s window. Triggers a click event when blinks_to_click=2.",
+      "readings": [
+        {"t": 0.00, "ear": 0.32, "eyes_closed": false},
+        {"t": 0.033, "ear": 0.15, "eyes_closed": true},
+        {"t": 0.066, "ear": 0.14, "eyes_closed": true},
+        {"t": 0.100, "ear": 0.14, "eyes_closed": true},
+        {"t": 0.133, "ear": 0.14, "eyes_closed": true},
+        {"t": 0.166, "ear": 0.15, "eyes_closed": true},
+        {"t": 0.200, "ear": 0.15, "eyes_closed": true},
+        {"t": 0.233, "ear": 0.32, "eyes_closed": false},
+        {"t": 0.266, "ear": 0.32, "eyes_closed": false},
+        {"t": 0.300, "ear": 0.32, "eyes_closed": false},
+        {"t": 0.333, "ear": 0.32, "eyes_closed": false},
+        {"t": 0.366, "ear": 0.32, "eyes_closed": false},
+        {"t": 0.400, "ear": 0.15, "eyes_closed": true},
+        {"t": 0.433, "ear": 0.14, "eyes_closed": true},
+        {"t": 0.466, "ear": 0.14, "eyes_closed": true},
+        {"t": 0.500, "ear": 0.14, "eyes_closed": true},
+        {"t": 0.533, "ear": 0.15, "eyes_closed": true},
+        {"t": 0.566, "ear": 0.15, "eyes_closed": true},
+        {"t": 0.600, "ear": 0.32, "eyes_closed": false},
+        {"t": 0.633, "ear": 0.33, "eyes_closed": false}
+      ],
+      "expected_click": true,
+      "expected_blinks": 2
+    },
+    {
+      "name": "eye_rest_or_drowsiness",
+      "description": "Eyes closed for > 1.3s (exceeds max_duration 1.2s). Ignored to prevent false clicks while resting.",
+      "readings": [
+        {"t": 0.00, "ear": 0.32, "eyes_closed": false},
+        {"t": 0.05, "ear": 0.15, "eyes_closed": true},
+        {"t": 0.50, "ear": 0.14, "eyes_closed": true},
+        {"t": 1.00, "ear": 0.14, "eyes_closed": true},
+        {"t": 1.35, "ear": 0.15, "eyes_closed": true},
+        {"t": 1.40, "ear": 0.32, "eyes_closed": false}
+      ],
+      "expected_click": false,
+      "expected_blinks": 0
+    }
+  ]
+}
